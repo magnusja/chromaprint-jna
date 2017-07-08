@@ -15,8 +15,6 @@ public class ChromaprintLibraryTest {
 
     @Before
     public void setUp() throws Exception {
-        System.setProperty("jna.library.path", "/Users/magnusja/Downloads/chromaprint-1.4.2/src");
-
         context = ChromaprintLibrary.INSTANCE.chromaprint_new(
                 ChromaprintLibrary.ChromaprintAlgorithm.CHROMAPRINT_ALGORITHM_DEFAULT);
     }
