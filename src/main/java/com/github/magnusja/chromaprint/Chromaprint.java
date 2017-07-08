@@ -5,6 +5,7 @@ import org.acoustid.chromaprint.jna.ChromaprintLibrary;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -17,7 +18,15 @@ public class Chromaprint {
     private final AudioInputStream inputStream;
 
     public Chromaprint(AudioInputStream inputStream) {
-        this.inputStream = inputStream;
+        AudioFormat format = inputStream.getFormat();
+        format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
+                format.getSampleRate(),
+                format.getSampleSizeInBits(),
+                format.getChannels(),
+                format.getFrameSize(),
+                format.getFrameRate(),
+                format.isBigEndian());
+        this.inputStream = AudioSystem.getAudioInputStream(format, inputStream);
     }
 
     public Fingerprint calculateFingerPrint() throws IOException {
@@ -43,6 +52,7 @@ public class Chromaprint {
             result = ChromaprintLibrary.INSTANCE.chromaprint_feed(context, shortArrayBuffer, read / 2);
             assert result == 1;
         }
+
 
         result = ChromaprintLibrary.INSTANCE.chromaprint_finish(context);
         assert result == 1;
