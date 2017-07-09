@@ -13,9 +13,18 @@ public class Fingerprint {
         this.context = context;
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+
+        ChromaprintLibrary.INSTANCE.chromaprint_free(context);
+    }
+
     public String getString() {
         final PointerByReference ref = new PointerByReference();
         ChromaprintLibrary.INSTANCE.chromaprint_get_fingerprint(context, ref);
-        return ref.getValue().getString(0);
+        String fp = ref.getValue().getString(0);
+        ChromaprintLibrary.INSTANCE.chromaprint_dealloc(ref.getPointer());
+        return fp;
     }
 }
